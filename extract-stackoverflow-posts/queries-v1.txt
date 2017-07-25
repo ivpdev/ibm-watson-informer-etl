@@ -1,0 +1,19 @@
+----- get posts and comments
+create table #postIds (questionId int)
+
+insert #postIds 
+select top 500
+  id
+from Posts
+where 
+Tags LIKE '%ibm-watson-cognitive%'
+order by CreationDate desc
+
+select * from Posts p
+inner join #postIds pid
+on p.id=pid.postId
+
+select * from Comments c
+inner join #postIds p
+on p.postId=c.postId
+

@@ -1,0 +1,1 @@
+python ./train.py -u e5ac6f21-a36d-4743-90f6-2faa3a1dcc84:uCHWRolXIVOm -i ./cranfield-gt.csv -c sc04d0f7b1_432a_4b3e_8ff3_b2a8a8614bb6 -x example_collection -n "example_ranker"

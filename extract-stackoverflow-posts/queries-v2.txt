@@ -1,0 +1,24 @@
+create table #questions (PostId int, Title nvarchar(250), Body nvarchar(max), AcceptedAnswerId int, CreationDate datetime)
+create table #answers (PostId int, ParentId int, Title nvarchar(250), Body nvarchar(max), Score int, CreationDate datetime)
+
+insert #questions
+select  
+	Id, Title, Body, AcceptedAnswerId, CreationDate 
+from Posts
+where 
+PostTypeId = 1 AND
+Tags LIKE '%ibm-watson-cognitive%'
+order by CreationDate desc
+
+insert #answers
+select  
+	p.Id, p.ParentId, p.Title, p.Body, p.Score, p.CreationDate  
+from #questions
+left join Posts p
+on #questions.PostId = p.ParentId
+where 
+p.PostTypeId = 2 
+order by p.CreationDate desc
+
+select * from #questions
+select * from #answers
