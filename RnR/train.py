@@ -75,27 +75,30 @@ with open(RELEVANCE_FILE, 'rb') as csvfile:
     with open(TRAININGDATA, "a") as training_file:
         print ('Generating training data...')
         for row in question_relevance:
-            question = row[0]
-            print question
-            relevance = ','.join(row[1:])
-            curl_cmd = 'curl -k -s %s -u %s -d "q=%s&gt=%s&generateHeader=%s&rows=%s&returnRSInput=true&wt=json" "%s"' % (VERBOSE, CREDS, question, relevance, add_header, ROWS, SOLRURL)
-            if DEBUG:
-                print '-----------------------------------------------------------------------------------------------------------'
-                print (curl_cmd)
-            process = subprocess.Popen(shlex.split(curl_cmd), stdout=subprocess.PIPE)
-            output = process.communicate()[0]
-            if DEBUG:
-               print (output)
             try:
-               parsed_json = json.loads(output)
-               training_file.write(parsed_json['RSInput'])
+                question = row[0]
+                print question
+                relevance = ','.join(row[1:])
+                curl_cmd = 'curl -k -s %s -u %s -d "q=%s&gt=%s&generateHeader=%s&rows=%s&returnRSInput=true&wt=json" "%s"' % (VERBOSE, CREDS, question, relevance, add_header, ROWS, SOLRURL)
+                if DEBUG:
+                    print '-----------------------------------------------------------------------------------------------------------'
+                    print (curl_cmd)
+                process = subprocess.Popen(shlex.split(curl_cmd), stdout=subprocess.PIPE)
+                output = process.communicate()[0]
+                if DEBUG:
+                   print (output)
+                try:
+                   parsed_json = json.loads(output)
+                   training_file.write(parsed_json['RSInput'])
+                except:
+                   print ('Command:')
+                   print (curl_cmd)
+                   print ('Response:')
+                   print (output)
+                   #raise          
+                add_header = 'false'
             except:
-               print ('Command:')
-               print (curl_cmd)
-               print ('Response:')
-               print (output)
-               raise          
-            add_header = 'false'
+                print 'Ooops!'
 print ('Generating training data complete.')
 
 # Train the ranker with the training data that was generate above from the query/relevance input     
